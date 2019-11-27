@@ -17,9 +17,19 @@ DO
     PRINT "The long curved arc at the north and south ends of circle map to a very short distance on to the vertical axis and hence the velocity at the two ends is slow."
     PRINT "The projected motion is always accelerated toward the center - it's a classic example of Simple Harmonic Motion."
     PRINT "The graph of the velocity of the projected point on the vertical axis (against time) is a sine function."
-
     INPUT "Enter the radius of the closed circuit: ", radius
+
 LOOP WHILE radius <= 0.0
+DIM n AS INTEGER
+PRINT "1 for Displacement"
+PRINT "2 for Velocity"
+PRINT "3 for Acceleration"
+PRINT "4 to plot all of the above"
+
+DO
+    INPUT "Choose one of the following options: ", n
+LOOP WHILE n < 1 OR n > 4
+
 DIM c AS INTEGER
 
 SCREEN 12
@@ -27,7 +37,7 @@ FOR c = 1 TO 15
     'CLS
     DRAW_AXES
     ON ERROR GOTO handler
-    MOVE_POINT radius, c
+    MOVE_POINT radius, c, n
     handler:
     IF ERR > 0 THEN
         RESUME NEXT
@@ -56,20 +66,20 @@ SUB DRAW_AXES
     NEXT y
 END SUB
 
-SUB MOVE_POINT (radius AS DOUBLE, c AS INTEGER)
+SUB MOVE_POINT (radius AS DOUBLE, c AS INTEGER, n AS INTEGER)
     DIM x AS DOUBLE
     DIM y AS DOUBLE
     DIM h AS INTEGER
     DIM c1 AS INTEGER
     DIM c2 AS INTEGER
     DIM c3 AS INTEGER
-
     DIM d AS DOUBLE
 
-    d = .0001
+    d = .0005
     FOR i = 0.0 TO 2 * PI STEP d
         IF h <> 0 THEN
             CIRCLE (MID_COL, y * SCALE_FACTOR + MID_ROW), DOT_SIZE * SCALE_FACTOR, 0
+            COLOR 15
         END IF
 
         x = radius * COS(i)
@@ -78,40 +88,55 @@ SUB MOVE_POINT (radius AS DOUBLE, c AS INTEGER)
         CIRCLE (x * SCALE_FACTOR + MID_COL, y * SCALE_FACTOR + MID_ROW), DOT_SIZE * SCALE_FACTOR, c
         CIRCLE (MID_COL, y * SCALE_FACTOR + MID_ROW), DOT_SIZE * SCALE_FACTOR, 15
 
-        c1 = c + 1
-        IF c1 = 15 THEN c1 = 1
+        c1 = increment(c)
+        c2 = increment(c1)
+        c3 = increment(c2)
 
-        c2 = c1 + 1
-        IF c2 = 15 THEN c2 = 1
-
-        c3 = c2 + 1
-        IF c3 = 15 THEN c3 = 1
-
-
-        PSET (i * SCALE_FACTOR + MID_COL, (SIN(i + PI / 2)) * SCALE_FACTOR * radius + MID_ROW), c1
-        PSET (i * SCALE_FACTOR + MID_COL, -COS(i + PI / 2) * SCALE_FACTOR * radius + MID_ROW), c2
-        PSET (i * SCALE_FACTOR + MID_COL, -(SIN(i + PI / 2)) * SCALE_FACTOR * radius + MID_ROW), c3
-
-        COLOR 15
+        COLOR c
         LOCATE 1, 1
         PRINT USING "Angle in degrees: ###.##"; i * 180 / PI
         LOCATE 2, 1
         PRINT USING "Circle: (###.##,###.##)"; x; -y
+        COLOR 15
         LOCATE 3, 1
         PRINT USING "Projection: (###.##,###.##)"; 0; -y
-        COLOR c1
-        LOCATE 4, 1
-        PRINT USING "Displacement: (###.##,###.##)"; i, radius * COS(i + PI / 2)
-        COLOR c2
-        LOCATE 5, 1
-        PRINT USING "Velocity: (###.##,###.##)"; i, radius * -SIN(i + PI / 2)
-        COLOR c3
-        LOCATE 6, 1
-        PRINT USING "Acceleration: (###.##,###.##)"; i, radius * -COS(i + PI / 2)
+
+
+        IF n = 1 THEN
+            plot i, COS(i + PI / 2), radius, c1, 4, "Displacement: (###.##,###.##)"
+        END IF
+
+        IF n = 2 THEN
+            plot i, -SIN(i + PI / 2), radius, c2, 4, "Velocity: (###.##,###.##)"
+        END IF
+
+        IF n = 3 THEN
+            plot i, -COS(i + PI / 2), radius, c3, 4, "Acceleration: (###.##,###.##)"
+        END IF
+
+        IF n = 4 THEN
+            plot i, COS(i + PI / 2), radius, c1, 4, "Displacement: (###.##,###.##)"
+            plot i, -SIN(i + PI / 2), radius, c2, 5, "Velocity: (###.##,###.##)"
+            plot i, -COS(i + PI / 2), radius, c3, 6, "Acceleration: (###.##,###.##)"
+        END IF
         h = 1
     NEXT
 END SUB
 
+SUB plot (x AS DOUBLE, y AS DOUBLE, radius AS DOUBLE, c AS INTEGER, row AS INTEGER, s AS STRING)
+    PSET (x * SCALE_FACTOR + MID_COL, y * SCALE_FACTOR * radius + MID_ROW), c
+    COLOR c
+    LOCATE row, 1
+    PRINT USING s; x, y
+END SUB
+
+
+FUNCTION increment (c AS INTEGER)
+    DIM c1 AS INTEGER
+    c1 = c + 1
+    IF c1 = 15 THEN c1 = 1
+    increment = c1
+END FUNCTION
 SUB Delay (dlay!)
     start! = TIMER
     DO WHILE start! + dlay! >= TIMER
