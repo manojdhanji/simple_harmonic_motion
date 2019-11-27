@@ -13,7 +13,7 @@ CONST DOT_SIZE = 0.07
 DIM radius AS DOUBLE
 DO
     CLS
-    PRINT "This program demonstrates the relationship between a 2-diminensinal uniform circular motion and its projected 1-dimensional motion."
+    PRINT "This program demonstrates the relationship between a 2-diminensional uniform circular motion and its projected 1-dimensional motion."
     PRINT "The long curved arc at the north and south ends of circle map to a very short distance on to the vertical axis and hence the velocity at the two ends is slow."
     PRINT "The projected motion is always accelerated toward the center - it's a classic example of Simple Harmonic Motion."
     PRINT "The graph of the velocity of the projected point on the vertical axis (against time) is a sine function."
