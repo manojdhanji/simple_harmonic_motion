@@ -1,0 +1,2 @@
+# simple_harmonic_motion
+A 2-dimensional uniform circular motion when projected on a single dimension (horizontal or vertical axis) is a Simple Harmonic Motion (oscillatory motion with acceleration toward the center). This program plots the point along the circle and on the projected path. It also plots, displacement, velocity (first derivative of displacement with respect to time) and acceleration (second derivative of the displacement with respect to time) of the point on the projection.
